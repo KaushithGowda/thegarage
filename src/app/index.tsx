@@ -1,5 +1,6 @@
+import { useUserStore } from "@/lib/store/useUserStore";
 import { Link } from "expo-router";
-import React from "react";
+import React, { use } from "react";
 import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -14,6 +15,9 @@ export default function Page() {
 }
 
 function Content() {
+  const user = useUserStore(state => state.user)
+  console.log({user}); //Zustand setup
+  
   return (
     <View className="flex-1">
       <View className="py-12 md:py-24 lg:py-32 xl:py-48">
