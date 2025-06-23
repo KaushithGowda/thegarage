@@ -10,6 +10,9 @@
     "deploy": "npx expo export -p web && npx eas-cli@latest deploy"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.81.2",
+    "@tanstack/react-query-devtools": "^5.81.2",
+    "axios": "^1.10.0",
     "expo": "^53.0.4",
     "expo-constants": "~17.1.4",
     "expo-linking": "~7.1.4",
@@ -23,6 +26,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.11.1",
+    "react-native-toast-message": "^2.3.0",
     "react-native-web": "^0.20.0",
     "tailwindcss": "^3.4.0",
     "zustand": "^5.0.5"
@@ -30,6 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~19.0.10",
+    "@types/react-native": "^0.73.0",
     "typescript": "~5.8.3"
   },
   "private": true
