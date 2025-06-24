@@ -3,15 +3,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./src/*"
+        "./src/*",
+        "./*"
+      ],
+      "tailwind.config": [
+        "./tailwind.config.js"
       ]
     }
   },
-  "extends": "expo/tsconfig.base",
   "include": [
     "global.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "nativewind-env.d.ts"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
