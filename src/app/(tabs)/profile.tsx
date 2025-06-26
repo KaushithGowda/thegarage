@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router'
 import { useUserStore } from '@/store/useUserStore'
 import { usePreferenceStore } from '@/store/usePreferenceStore'
 import { useState } from 'react'
-import { useLogout } from '@/hooks/use-logout'
+import { useLogout } from '@/hooks/useLogout'
 import {
   AlertDialog,
   AlertDialogBackdrop,

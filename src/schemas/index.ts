@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const LoginSchema = z.object({
+export const loginSchema = z.object({
   email: z
     .string()
     .min(5, { message: 'Email must be at least 2 characters' })
@@ -17,7 +17,7 @@ export const LoginSchema = z.object({
   // }),
 })
 
-export const RegisterSchema = z.object({
+export const registerSchema = z.object({
   email: z
     .string()
     .min(5, { message: 'Email must be at least 2 characters' })
@@ -39,7 +39,7 @@ export const RegisterSchema = z.object({
   // }),
 })
 
-export const VehicleSchema = z.object({
+export const vehicleSchema = z.object({
   make: z
     .string()
     .min(3, { message: 'Make must be at least 3 characters' })
@@ -96,7 +96,7 @@ export const VehicleSchema = z.object({
   kerbWeight: z.string().optional().nullable(),
 })
 
-export const PartSchema = z
+export const partSchema = z
   .object({
     partName: z.string().min(1, { message: 'Part name is required' }),
     partNumber: z.string().min(1, { message: 'Part number is required' }),
@@ -121,7 +121,7 @@ export const PartSchema = z
     }
   )
 
-export const ProfileSchema = z.object({
+export const profileSchema = z.object({
   name: z
     .string()
     .min(3, { message: 'Name must be at least 3 characters' })

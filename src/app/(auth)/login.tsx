@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 
 import { InputFieldRef } from '@/types'
 
-import { LoginSchema } from '@/schemas'
+import { loginSchema } from '@/schemas'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -19,9 +19,9 @@ import { useRouter } from 'expo-router'
 
 import { AuthTransition } from '@/components/transistions/auth-transition'
 
-import { useCredentialsLogin } from '@/hooks/use-credentials-login'
+import { useCredentialsLogin } from '@/hooks/useCredentialsLogin'
 import { showToast } from '@/utils/showToast'
-import { useGoogleAuth } from '@/hooks/use-google-auth'
+import { useGoogleAuth } from '@/hooks/useGoogleAuth'
 
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -45,7 +45,7 @@ const Login = () => {
 
   const form = useMemo(
     () => ({
-      resolver: zodResolver(LoginSchema),
+      resolver: zodResolver(loginSchema),
       defaultValues: {
         email: '',
         password: '',
@@ -58,9 +58,9 @@ const Login = () => {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<z.infer<typeof LoginSchema>>(form)
+  } = useForm<z.infer<typeof loginSchema>>(form)
 
-  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     await credLogin(values.email, values.password)
   }
 
