@@ -15,8 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
 } from '@/components/ui/alert-dialog'
-import { View } from 'react-native'
+import { View, ScrollView } from 'react-native'
 import ScreenTransition from '@/components/transistions/screen-transition'
+import { Ionicons } from '@expo/vector-icons'
 
 const Row = ({
   label,
@@ -50,34 +51,97 @@ const Profile = () => {
 
   return (
     <ScreenTransition>
-      <VStack className='flex-1 bg-background px-4 py-5' space='3xl'>
-        <VStack space='sm' className='flex flex-row items-center my-5'>
-          <View className='w-24 h-24 bg-gray-300 rounded-full' />
-          <VStack className='flex flex-col'>
-            <Text className='text-xl font-bold text-typography-900'>
-              {user?.name || 'User Name'}
+      <View className='flex-row justify-between px-4 pt-4'>
+        <Button
+          variant='link'
+          onPress={() => router.push('/edit-profile')}
+          className='w-10 h-10 rounded-full items-center justify-center bg-background-100'
+        >
+          <Ionicons
+            name='build'
+            size={20}
+            color={mode === 'light' ? '#000' : '#fff'}
+          />
+        </Button>
+        <Button
+          variant='link'
+          onPress={toggle}
+          className='w-10 h-10 rounded-full items-center justify-center elevation-2xl bg-background-100'
+        >
+          <Ionicons
+            name={mode === 'light' ? 'moon' : 'sunny'}
+            size={20}
+            color={mode === 'light' ? '#000' : '#fff'}
+          />
+        </Button>
+      </View>
+
+      <VStack className='flex-1 px-4 py-6' space='4xl'>
+        {/* Avatar and Name */}
+        <VStack space='lg' className='items-center'>
+          <View className='w-28 h-28 bg-background-950 rounded-full items-center justify-center shadow-hard-3'>
+            <Text className='text-4xl font-bold text-typography-0'>
+              {(user?.name?.[0] || 'U').toUpperCase()}
             </Text>
-            <Text className='text-sm text-typography-500'>
-              {user?.name || 'username@email.com'}
-            </Text>
+          </View>
+          <VStack className='items-center space-y-1'>
+            <View className='flex-row justify-center items-center gap-2'>
+              <Text className='text-xl font-bold text-typography-900'>
+                {user?.name || 'User Name'}
+              </Text>
+              <Ionicons
+                name='checkmark-circle'
+                size={16}
+                color={mode === 'light' ? '#000' : '#fff'}
+              />
+            </View>
           </VStack>
         </VStack>
 
+        {/* Info Section */}
         <VStack
-          space='xs'
-          className='bg-white dark:bg-gray-800 rounded-xl px-3 py-3 shadow'
+          space='sm'
+          className='bg-background-100 rounded-xl px-5 py-8 shadow-hard-2'
         >
+          <Text className='text-xs font-semibold uppercase text-typography-400 mb-2 tracking-widest'>
+            Account Info
+          </Text>
+
           <Row
-            label='Theme'
-            action={
-              <Button size='sm' variant='outline' onPress={toggle}>
-                <ButtonText>
-                  {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
-                </ButtonText>
-              </Button>
+            label='Email'
+            value={
+              <View className='flex-row items-center gap-1'>
+                <Text className='text-sm font-medium text-typography-900'>
+                  {user?.email || 'username@email.com'}
+                </Text>
+                <Text className='text-typography-500'>
+                  <Ionicons
+                    name='shield-checkmark-outline'
+                    size={14}
+                    className='text-typography-500'
+                  />
+                </Text>
+              </View>
             }
           />
-          <Row label='Phone Number' value='+xx xxxxx xxxxx' />
+
+          <Row
+            label='Phone Number'
+            value={
+              <View className='flex-row items-center gap-1'>
+                <Text className='text-sm font-medium text-typography-900'>
+                  {user?.phoneNumber || '+xx xxxxx xxxxx'}
+                </Text>
+                <Text className='text-typography-500'>
+                  <Ionicons
+                    name='shield-checkmark-outline'
+                    size={14}
+                    className='text-typography-500'
+                  />
+                </Text>
+              </View>
+            }
+          />
           <Row label='Driving Experience' value={driving} />
           <Row label='Riding Experience' value={riding} />
           <Row label='My Vehicles' value='2 vehicles' />
@@ -115,8 +179,16 @@ const Profile = () => {
                       >
                         <ButtonText>Cancel</ButtonText>
                       </Button>
-                      <Button size='sm' onPress={logout}>
-                        <ButtonText>Logout</ButtonText>
+                      <Button
+                        className={`${mode === 'light' ? 'bg-error-300' : 'bg-error-700'}`}
+                        size='sm'
+                        onPress={logout}
+                      >
+                        <ButtonText
+                          className={`${mode === 'dark' && 'text-typography-950'}`}
+                        >
+                          Logout
+                        </ButtonText>
                       </Button>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -125,14 +197,20 @@ const Profile = () => {
                   variant='solid'
                   size='sm'
                   onPress={() => setShowAlertDialog(true)}
+                  className={`${mode === 'light' ? 'bg-error-300' : 'bg-error-700'} rounded-xl px-5`}
                 >
-                  <ButtonText>Logout</ButtonText>
+                  <Ionicons
+                    name='exit-outline'
+                    color={mode === 'light' ? '#000' : '#fff'}
+                    size={14}
+                  />
                 </Button>
               </>
             }
           />
         </VStack>
 
+        {/* Footer */}
         <VStack className='items-center pt-6 space-y-1'>
           <Text className='text-xs text-typography-400'>Joined Jan 2024</Text>
           <Text className='text-xs text-typography-400 text-center'>

@@ -3,15 +3,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { Animated, View, Text } from 'react-native'
 
-// Import your screens
 import Chat from '@/src/app/(tabs)/chat'
 import Health from '@/src/app/(tabs)/health'
 import Forum from '@/src/app/(tabs)/forum'
 import Maps from '@/src/app/(tabs)/maps'
 import Blogs from '@/src/app/(tabs)/blogs'
 import Profile from '@/src/app/(tabs)/profile'
+import { usePreferenceStore } from '@/store/usePreferenceStore'
 
-// simulate auth state and badge count
 const unreadCount = 1
 
 const Tab = createBottomTabNavigator()
@@ -19,19 +18,18 @@ const Tab = createBottomTabNavigator()
 const TabIcon = ({
   iconName,
   focused,
-  color,
   size,
 }: {
   iconName: keyof typeof Ionicons.glyphMap
   focused: boolean
-  color: string
   size: number
 }) => {
+  const mode = usePreferenceStore((s) => s.mode)
   const scale = useRef(new Animated.Value(1)).current
 
   useEffect(() => {
     Animated.spring(scale, {
-      toValue: focused ? 1.1 : 0.8,
+      toValue: focused ? 1 : 0.7,
       useNativeDriver: true,
       stiffness: 200,
       damping: 10,
@@ -40,13 +38,18 @@ const TabIcon = ({
 
   return (
     <Animated.View
-      className={`items-center justify-center rounded-xl w-12 h-12 ${
-        focused ? 'bg-background-100 dark:bg-background-800' : 'bg-transparent'
-      }`}
+      className={`items-center justify-center rounded-xl w-12 h-12 ${focused && 'bg-background-200 text-typography-0'}`}
       style={{ transform: [{ scale }] }}
     >
-      <Ionicons name={iconName} size={size} color={color} />
-      <Text className='text-xs mt-1 text-typography-black dark:text-typography-white'>
+      <Ionicons
+        name={iconName}
+        size={size}
+        color={mode === 'light' ? '#000' : '#fff'}
+      />
+      <Text
+        className={`text-xs mt-1 text-typography-900
+        `}
+      >
         {(() => {
           switch (iconName) {
             case 'heart':
@@ -100,9 +103,10 @@ export default function TabsLayout() {
         return {
           headerShown: false,
           tabBarShowLabel: false,
-          tabBarActiveTintColor: '#000',
-          tabBarInactiveTintColor: '#6B7280',
+          tabBarActiveTintColor: 'text-typography-0',
+          tabBarInactiveTintColor: 'text-typography-0',
           tabBarStyle: {
+            backgroundColor: 'bg-background-0',
             position: 'absolute',
             height: 70,
             paddingTop: 15,
@@ -111,13 +115,8 @@ export default function TabsLayout() {
           animation: 'fade',
           freezeOnBlur: true,
           tabBarPosition: 'bottom',
-          tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon
-              iconName={iconName}
-              focused={focused}
-              color={color}
-              size={20}
-            />
+          tabBarIcon: ({ focused }) => (
+            <TabIcon iconName={iconName} focused={focused} size={20} />
           ),
         }
       }}

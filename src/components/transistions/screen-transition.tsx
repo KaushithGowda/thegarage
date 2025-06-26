@@ -1,4 +1,4 @@
-import { Animated } from 'react-native'
+import { Animated, ScrollView, View } from 'react-native'
 import { useCallback, useRef } from 'react'
 import { useFocusEffect } from 'expo-router'
 
@@ -11,7 +11,7 @@ function ScreenTransition({ children }: { children: React.ReactNode }) {
       Animated.parallel([
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 800,
+          duration: 500,
           useNativeDriver: true,
         }),
         Animated.spring(scale, {
@@ -28,9 +28,16 @@ function ScreenTransition({ children }: { children: React.ReactNode }) {
   )
 
   return (
-    <Animated.View style={{ flex: 1, opacity, transform: [{ scale }] }}>
-      {children}
-    </Animated.View>
+    <View className='flex-1 bg-background-0'>
+      <Animated.View
+        className={'flex-1'}
+        style={{ opacity, transform: [{ scale }] }}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          {children}
+        </ScrollView>
+      </Animated.View>
+    </View>
   )
 }
 
