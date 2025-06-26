@@ -1,46 +1,48 @@
-import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '@/store/useAuthStore'
 import { axiosPublic } from '@/lib/api/axios'
+import { useMutation } from '@tanstack/react-query'
 
 export const useCredentialsLogin = () => {
-  const [success, setSuccess] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  const login = async (email: string, password: string) => {
-    setIsLoading(true)
-    setError(null)
-    console.log(email,password);
-    console.log(`${process.env.EXPO_PUBLIC_API_URL}/api/mobile-login`);
-
-    try {
+  const {
+    mutateAsync,
+    isPending: isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
       const res = await axiosPublic.post(
         `${process.env.EXPO_PUBLIC_API_URL}/api/mobile-login`,
         { email, password }
       )
-
-      console.log(res);
-      
-      const token = res.data?.token || null
-      const user = res.data?.user || null
-
+      return res.data
+    },
+    onSuccess: (data) => {
+      const { token, user } = data
       if (token && user) {
-        setSuccess('Login successful')
         useAuthStore.getState().setAuth(token, user)
         router.replace('/(tabs)/home')
-        return { success: true }
       }
+    },
+  })
 
-      setError('Invalid credentials')
-    } catch (err: any) {
-      console.error(err);
-      setError(err?.response?.data?.error || 'Something went wrong')
-    } finally {
-      setIsLoading(false)
+  const login = async (email: string, password: string) => {
+    try {
+      await mutateAsync({ email, password })
+      return { success: true }
+    } catch (err) {
+      console.error(err)
+      return { success: false }
     }
   }
 
-  return { login, success, error, isLoading }
+  return {
+    login,
+    error: isError ? (error as any)?.response?.data?.error || 'Something went wrong' : null,
+    success: isSuccess ? 'Login successful' : null,
+    isLoading,
+  }
 }
