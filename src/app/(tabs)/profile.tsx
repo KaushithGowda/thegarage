@@ -16,6 +16,7 @@ import {
   AlertDialogBody,
 } from '@/components/ui/alert-dialog'
 import { View } from 'react-native'
+import ScreenTransition from '@/components/transistions/screen-transition'
 
 const Row = ({
   label,
@@ -48,96 +49,98 @@ const Profile = () => {
   const riding = '1y 8m'
 
   return (
-    <VStack className='flex-1 bg-background px-4 py-5' space='3xl'>
-      <VStack space='sm' className='flex flex-row items-center my-5'>
-        <View className='w-24 h-24 bg-gray-300 rounded-full' />
-        <VStack className='flex flex-col'>
-          <Text className='text-xl font-bold text-typography-900'>
-            {user?.name || 'User Name'}
-          </Text>
-          <Text className='text-sm text-typography-500'>
-            {user?.name || 'username@email.com'}
+    <ScreenTransition>
+      <VStack className='flex-1 bg-background px-4 py-5' space='3xl'>
+        <VStack space='sm' className='flex flex-row items-center my-5'>
+          <View className='w-24 h-24 bg-gray-300 rounded-full' />
+          <VStack className='flex flex-col'>
+            <Text className='text-xl font-bold text-typography-900'>
+              {user?.name || 'User Name'}
+            </Text>
+            <Text className='text-sm text-typography-500'>
+              {user?.name || 'username@email.com'}
+            </Text>
+          </VStack>
+        </VStack>
+
+        <VStack
+          space='xs'
+          className='bg-white dark:bg-gray-800 rounded-xl px-3 py-3 shadow'
+        >
+          <Row
+            label='Theme'
+            action={
+              <Button size='sm' variant='outline' onPress={toggle}>
+                <ButtonText>
+                  {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
+                </ButtonText>
+              </Button>
+            }
+          />
+          <Row label='Phone Number' value='+xx xxxxx xxxxx' />
+          <Row label='Driving Experience' value={driving} />
+          <Row label='Riding Experience' value={riding} />
+          <Row label='My Vehicles' value='2 vehicles' />
+          <Row
+            label='Sign Out'
+            action={
+              <>
+                <AlertDialog
+                  isOpen={showAlertDialog}
+                  onClose={() => setShowAlertDialog(false)}
+                  size='md'
+                >
+                  <AlertDialogBackdrop />
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <Heading
+                        className='text-typography-900 font-semibold'
+                        size='md'
+                      >
+                        Are you sure you want to logout?
+                      </Heading>
+                    </AlertDialogHeader>
+                    <AlertDialogBody className='mt-3 mb-4'>
+                      <Text size='sm' className='text-typography-500'>
+                        Logging out will sign you out of the app. Please confirm
+                        if you want to proceed.
+                      </Text>
+                    </AlertDialogBody>
+                    <AlertDialogFooter className='gap-2'>
+                      <Button
+                        variant='outline'
+                        action='secondary'
+                        onPress={() => setShowAlertDialog(false)}
+                        size='sm'
+                      >
+                        <ButtonText>Cancel</ButtonText>
+                      </Button>
+                      <Button size='sm' onPress={logout}>
+                        <ButtonText>Logout</ButtonText>
+                      </Button>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+                <Button
+                  variant='solid'
+                  size='sm'
+                  onPress={() => setShowAlertDialog(true)}
+                >
+                  <ButtonText>Logout</ButtonText>
+                </Button>
+              </>
+            }
+          />
+        </VStack>
+
+        <VStack className='items-center pt-6 space-y-1'>
+          <Text className='text-xs text-typography-400'>Joined Jan 2024</Text>
+          <Text className='text-xs text-typography-400 text-center'>
+            Version 1.0.0 - Built with Expo + NativeWind + Zustand
           </Text>
         </VStack>
       </VStack>
-
-      <VStack
-        space='xs'
-        className='bg-white dark:bg-gray-800 rounded-xl px-3 py-3 shadow'
-      >
-        <Row
-          label='Theme'
-          action={
-            <Button size='sm' variant='outline' onPress={toggle}>
-              <ButtonText>
-                {mode === 'light' ? 'Dark Mode' : 'Light Mode'}
-              </ButtonText>
-            </Button>
-          }
-        />
-        <Row label='Phone Number' value='+xx xxxxx xxxxx' />
-        <Row label='Driving Experience' value={driving} />
-        <Row label='Riding Experience' value={riding} />
-        <Row label='My Vehicles' value='2 vehicles' />
-        <Row
-          label='Sign Out'
-          action={
-            <>
-              <AlertDialog
-                isOpen={showAlertDialog}
-                onClose={() => setShowAlertDialog(false)}
-                size='md'
-              >
-                <AlertDialogBackdrop />
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <Heading
-                      className='text-typography-900 font-semibold'
-                      size='md'
-                    >
-                      Are you sure you want to logout?
-                    </Heading>
-                  </AlertDialogHeader>
-                  <AlertDialogBody className='mt-3 mb-4'>
-                    <Text size='sm' className='text-typography-500'>
-                      Logging out will sign you out of the app. Please confirm
-                      if you want to proceed.
-                    </Text>
-                  </AlertDialogBody>
-                  <AlertDialogFooter className='gap-2'>
-                    <Button
-                      variant='outline'
-                      action='secondary'
-                      onPress={() => setShowAlertDialog(false)}
-                      size='sm'
-                    >
-                      <ButtonText>Cancel</ButtonText>
-                    </Button>
-                    <Button size='sm' onPress={logout}>
-                      <ButtonText>Logout</ButtonText>
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              <Button
-                variant='solid'
-                size='sm'
-                onPress={() => setShowAlertDialog(true)}
-              >
-                <ButtonText>Logout</ButtonText>
-              </Button>
-            </>
-          }
-        />
-      </VStack>
-
-      <VStack className='items-center pt-6 space-y-1'>
-        <Text className='text-xs text-typography-400'>Joined Jan 2024</Text>
-        <Text className='text-xs text-typography-400 text-center'>
-          Version 1.0.0 - Built with Expo + NativeWind + Zustand
-        </Text>
-      </VStack>
-    </VStack>
+    </ScreenTransition>
   )
 }
 

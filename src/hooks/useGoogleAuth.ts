@@ -33,7 +33,7 @@ export const useGoogleAuth = () => {
       const { token, user } = data
       if (token && user) {
         useAuthStore.getState().setAuth(token, user)
-        router.replace('/(tabs)/home')
+        router.replace('/(tabs)/maps')
       }
     },
   })

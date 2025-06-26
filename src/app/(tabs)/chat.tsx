@@ -1,12 +1,12 @@
 import ComingSoon from '@/components/coming-soon'
 import ScreenTransition from '@/components/transistions/screen-transition'
 
-const Forum = () => {
+const Chat = () => {
   return (
     <ScreenTransition>
-      <ComingSoon pagename='forum' />
+      <ComingSoon pagename='chat' />
     </ScreenTransition>
   )
 }
 
-export default Forum
+export default Chat
