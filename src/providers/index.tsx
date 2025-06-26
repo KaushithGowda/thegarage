@@ -5,11 +5,11 @@ import { GlueStackUiProvider } from './GlueStackUiProvider'
 
 export const Provider = ({ children }: { children: ReactNode }) => {
   return (
-    <ReactQueryProvider>
-      <GlueStackUiProvider>
+    <GlueStackUiProvider>
+      <ReactQueryProvider>
         <ToastProvider />
         {children}
-      </GlueStackUiProvider>
-    </ReactQueryProvider>
+      </ReactQueryProvider>
+    </GlueStackUiProvider>
   )
 }

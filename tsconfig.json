@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "jsxImportSource": "nativewind",
     "paths": {
       "@/*": [
         "./src/*",

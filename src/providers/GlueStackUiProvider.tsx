@@ -1,11 +1,10 @@
 import React from 'react'
-import { GluestackUIProvider as Provider } from '@gluestack-ui/themed'
-import { config } from '@gluestack-ui/config'
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 
 export const GlueStackUiProvider = ({
   children,
 }: {
   children: React.ReactNode
 }) => {
-  return <Provider config={config} colorMode='light'>{children}</Provider>
+  return <GluestackUIProvider>{children}</GluestackUIProvider>
 }

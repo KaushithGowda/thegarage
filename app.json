@@ -1,6 +1,11 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "com.thegarage.app",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "web": {
@@ -12,9 +17,24 @@
         {
           "origin": "https://n"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "name": "thegarage",
-    "slug": "thegarage"
+    "slug": "thegarage",
+    "ios": {
+      "bundleIdentifier": "com.thegarage.app"
+    },
+    "android": {
+      "package": "com.thegarage.app"
+    },
+    "extra": {
+      "router": {
+        "origin": "https://n"
+      },
+      "eas": {
+        "projectId": "82d59018-ea31-4c33-b2ed-7bde38375414"
+      }
+    }
   }
 }
