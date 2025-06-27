@@ -2,7 +2,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
-import { setupAxiosAuthInterceptor } from '@/lib/api/axios'
+import { setupAxiosAuthInterceptor } from '@/lib/api/setupAxiosAuthInterceptor'
 
 type AuthStore = {
   token: string | null

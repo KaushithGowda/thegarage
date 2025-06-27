@@ -1,11 +1,12 @@
 import { VStack } from '@/components/ui/vstack'
 import { Text } from '@/components/ui/text'
 import { Button, ButtonText } from '@/components/ui/button'
+import ProfileForm from '@/components/profile-form'
 import { Heading } from '@/components/ui/heading'
 import { useRouter } from 'expo-router'
 import { useUserStore } from '@/store/useUserStore'
 import { usePreferenceStore } from '@/store/usePreferenceStore'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useLogout } from '@/hooks/auth/useLogout'
 import {
   AlertDialog,
@@ -19,6 +20,7 @@ import { View, ScrollView } from 'react-native'
 import ScreenTransition from '@/components/transistions/screen-transition'
 import { Ionicons } from '@expo/vector-icons'
 import { useGetProfile } from '@/hooks/profile/useGetProfile'
+import { BottomSheet, BottomSheetRef } from '@/components/bottom-sheet'
 
 const Row = ({
   label,
@@ -26,16 +28,12 @@ const Row = ({
   action,
 }: {
   label: string
-  value?: string
+  value?: React.ReactNode
   action?: React.ReactNode
 }) => (
   <View className='flex-row justify-between items-center border-b border-typography-200 py-4'>
     <Text className='text-sm text-typography-500'>{label}</Text>
-    {value ? (
-      <Text className='text-sm font-medium text-typography-900'>{value}</Text>
-    ) : (
-      action
-    )}
+    {value ? <>{value}</> : action}
   </View>
 )
 
@@ -47,6 +45,9 @@ const Profile = () => {
   const user = useUserStore((s) => s.user)
   const { data: profile, isLoading } = useGetProfile()
   const [showAlertDialog, setShowAlertDialog] = useState(false)
+
+  //Bottom sheet
+  const [isEditOpen, setEditOpen] = useState(false)
 
   // Helper to calculate years and months from months count
   function getYearsAndMonths(months?: number) {
@@ -68,24 +69,65 @@ const Profile = () => {
       ? `${ridingExp.years}y${ridingExp.months ? ` ${ridingExp.months}m` : ''}`
       : '—'
 
-  console.log({ profile })
+  // Bottom sheet ref
+  const bottomSheetRef = useRef<BottomSheetRef>(null)
 
-  // if (isLoading) {
-  //   return (
-  //     <ScreenTransition>
-  //       <View className="flex-1 items-center justify-center">
-  //         <Text>Loading profile...</Text>
-  //       </View>
-  //     </ScreenTransition>
-  //   )
-  // }
+  const handleOpenSheet = () => {
+    bottomSheetRef.current?.present()
+  }
+
+  const handleCloseSheet = () => {
+    bottomSheetRef.current?.dismiss()
+  }
 
   return (
     <ScreenTransition>
+      // Update the BottomSheet section in your Profile component
+      <BottomSheet
+        ref={bottomSheetRef}
+        isOpen={isEditOpen}
+        onClose={() => setEditOpen(false)}
+        bgColor={mode === 'light' ? '#f3f4f6' : '#1f2937'}
+      >
+        <View
+          className={`flex-1 p-6 ${mode === 'light' ? 'bg-gray-100' : 'bg-gray-800'}`}
+        >
+          <View className='flex-row justify-between items-center mb-4'>
+            <Text
+              className={`text-lg font-semibold ${mode === 'light' ? 'text-gray-900' : 'text-white'}`}
+            >
+              Edit Profile
+            </Text>
+            <Button
+              variant='solid'
+              className='bg-background-950 rounded-xl'
+              size='md'
+              onPress={() => setEditOpen(false)}
+            >
+              <Ionicons
+                name='close'
+                size={24}
+                color={mode === 'dark' ? '#000' : '#fff'}
+              />
+            </Button>
+          </View>
+
+          {/* Pass profile data to ProfileForm */}
+          <ProfileForm
+            profile={{
+              name: profile?.name,
+              phoneNumber: profile?.phoneNumber,
+              dexp: profile?.dexp,
+              rexp: profile?.rexp,
+            }}
+            onSuccess={() => setEditOpen(false)}
+          />
+        </View>
+      </BottomSheet>
       <View className='flex-row justify-between px-4 pt-4'>
         <Button
           variant='link'
-          onPress={() => router.push('/edit-profile')}
+          onPress={() => setEditOpen(true)}
           className='w-10 h-10 rounded-full items-center justify-center bg-background-100'
         >
           <Ionicons
@@ -106,7 +148,6 @@ const Profile = () => {
           />
         </Button>
       </View>
-
       <VStack className='flex-1 px-4 py-6' space='2xl'>
         {/* Avatar and Name */}
         <VStack space='lg' className='items-center'>
@@ -121,11 +162,7 @@ const Profile = () => {
                 {profile?.name || 'User Name'}
               </Text>
               {profile?.emailVerified ? (
-                <Ionicons
-                  name='md-verified'
-                  size={16}
-                  color='#4094f7'
-                />
+                <Ionicons name='checkmark-circle' size={16} color='#4094f7' />
               ) : null}
             </View>
           </VStack>
@@ -258,10 +295,13 @@ const Profile = () => {
         <VStack className='items-center pt-5 space-y-1'>
           <Text className='text-xs text-typography-400'>
             {profile?.createdAt
-              ? `Joined ${new Date(profile.createdAt).toLocaleString('default', {
-                  month: 'short',
-                  year: 'numeric',
-                })}`
+              ? `Joined ${new Date(profile.createdAt).toLocaleString(
+                  'default',
+                  {
+                    month: 'short',
+                    year: 'numeric',
+                  }
+                )}`
               : 'Joined'}
           </Text>
           <Text className='text-xs text-typography-400 text-center'>

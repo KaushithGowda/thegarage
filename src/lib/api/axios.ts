@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { config } from '../../constants'
-import { useAuthStore } from '@/store/useAuthStore'
 
 // Public axios instance (no auth headers)
 export const axiosPublic = axios.create({
@@ -18,13 +17,3 @@ export const axiosPrivate = axios.create({
     'Content-Type': 'application/json',
   },
 })
-
-export const setupAxiosAuthInterceptor = () => {
-  axiosPrivate.interceptors.request.use((config) => {
-    const token = useAuthStore.getState().token
-    if (token && config.headers) {
-      config.headers['Authorization'] = `Bearer ${token}`
-    }
-    return config
-  })
-}
