@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router'
 import { useUserStore } from '@/store/useUserStore'
 import { usePreferenceStore } from '@/store/usePreferenceStore'
 import { useState } from 'react'
-import { useLogout } from '@/hooks/useLogout'
+import { useLogout } from '@/hooks/auth/useLogout'
 import {
   AlertDialog,
   AlertDialogBackdrop,
@@ -18,6 +18,7 @@ import {
 import { View, ScrollView } from 'react-native'
 import ScreenTransition from '@/components/transistions/screen-transition'
 import { Ionicons } from '@expo/vector-icons'
+import { useGetProfile } from '@/hooks/profile/useGetProfile'
 
 const Row = ({
   label,
@@ -44,10 +45,40 @@ const Profile = () => {
   const mode = usePreferenceStore((s) => s.mode)
   const toggle = usePreferenceStore((s) => s.toggleMode)
   const user = useUserStore((s) => s.user)
+  const { data: profile, isLoading } = useGetProfile()
   const [showAlertDialog, setShowAlertDialog] = useState(false)
 
-  const driving = '2y 6m'
-  const riding = '1y 8m'
+  // Helper to calculate years and months from months count
+  function getYearsAndMonths(months?: number) {
+    if (!months || Number.isNaN(months)) return { years: 0, months: 0 }
+    const years = Math.floor(months / 12)
+    const remMonths = months % 12
+    return { years, months: remMonths }
+  }
+
+  // Driving and Riding Experience
+  const drivingExp = getYearsAndMonths(profile?.dexp)
+  const ridingExp = getYearsAndMonths(profile?.rexp)
+  const driving =
+    drivingExp.years || drivingExp.months
+      ? `${drivingExp.years}y${drivingExp.months ? ` ${drivingExp.months}m` : ''}`
+      : '—'
+  const riding =
+    ridingExp.years || ridingExp.months
+      ? `${ridingExp.years}y${ridingExp.months ? ` ${ridingExp.months}m` : ''}`
+      : '—'
+
+  console.log({ profile })
+
+  // if (isLoading) {
+  //   return (
+  //     <ScreenTransition>
+  //       <View className="flex-1 items-center justify-center">
+  //         <Text>Loading profile...</Text>
+  //       </View>
+  //     </ScreenTransition>
+  //   )
+  // }
 
   return (
     <ScreenTransition>
@@ -76,31 +107,33 @@ const Profile = () => {
         </Button>
       </View>
 
-      <VStack className='flex-1 px-4 py-6' space='4xl'>
+      <VStack className='flex-1 px-4 py-6' space='2xl'>
         {/* Avatar and Name */}
         <VStack space='lg' className='items-center'>
-          <View className='w-28 h-28 bg-background-950 rounded-full items-center justify-center shadow-hard-3'>
+          <View className='w-20 h-20 bg-background-950 rounded-full items-center justify-center shadow-hard-3'>
             <Text className='text-4xl font-bold text-typography-0'>
-              {(user?.name?.[0] || 'U').toUpperCase()}
+              {(profile?.name?.[0] || 'U').toUpperCase()}
             </Text>
           </View>
           <VStack className='items-center space-y-1'>
             <View className='flex-row justify-center items-center gap-2'>
               <Text className='text-xl font-bold text-typography-900'>
-                {user?.name || 'User Name'}
+                {profile?.name || 'User Name'}
               </Text>
-              <Ionicons
-                name='checkmark-circle'
-                size={16}
-                color={mode === 'light' ? '#000' : '#fff'}
-              />
+              {profile?.emailVerified ? (
+                <Ionicons
+                  name='md-verified'
+                  size={16}
+                  color='#4094f7'
+                />
+              ) : null}
             </View>
           </VStack>
         </VStack>
 
         {/* Info Section */}
         <VStack
-          space='sm'
+          space='xs'
           className='bg-background-100 rounded-xl px-5 py-8 shadow-hard-2'
         >
           <Text className='text-xs font-semibold uppercase text-typography-400 mb-2 tracking-widest'>
@@ -112,15 +145,17 @@ const Profile = () => {
             value={
               <View className='flex-row items-center gap-1'>
                 <Text className='text-sm font-medium text-typography-900'>
-                  {user?.email || 'username@email.com'}
+                  {profile?.email || 'username@email.com'}
                 </Text>
-                <Text className='text-typography-500'>
-                  <Ionicons
-                    name='shield-checkmark-outline'
-                    size={14}
-                    className='text-typography-500'
-                  />
-                </Text>
+                {profile?.emailVerified ? (
+                  <Text className='text-typography-500'>
+                    <Ionicons
+                      name='shield-checkmark-outline'
+                      size={14}
+                      className='text-typography-500'
+                    />
+                  </Text>
+                ) : null}
               </View>
             }
           />
@@ -130,21 +165,30 @@ const Profile = () => {
             value={
               <View className='flex-row items-center gap-1'>
                 <Text className='text-sm font-medium text-typography-900'>
-                  {user?.phoneNumber || '+xx xxxxx xxxxx'}
+                  {profile?.phoneNumber || '+xx xxxxx xxxxx'}
                 </Text>
-                <Text className='text-typography-500'>
-                  <Ionicons
-                    name='shield-checkmark-outline'
-                    size={14}
-                    className='text-typography-500'
-                  />
-                </Text>
+                {profile?.emailVerified ? (
+                  <Text className='text-typography-500'>
+                    <Ionicons
+                      name='shield-checkmark-outline'
+                      size={14}
+                      className='text-typography-500'
+                    />
+                  </Text>
+                ) : null}
               </View>
             }
           />
           <Row label='Driving Experience' value={driving} />
           <Row label='Riding Experience' value={riding} />
-          <Row label='My Vehicles' value='2 vehicles' />
+          <Row
+            label='My Vehicles'
+            value={
+              typeof profile?.vehicles?.length === 'number'
+                ? `${profile.vehicles.length} vehicle${profile.vehicles.length === 1 ? '' : 's'}`
+                : '—'
+            }
+          />
           <Row
             label='Sign Out'
             action={
@@ -211,8 +255,15 @@ const Profile = () => {
         </VStack>
 
         {/* Footer */}
-        <VStack className='items-center pt-6 space-y-1'>
-          <Text className='text-xs text-typography-400'>Joined Jan 2024</Text>
+        <VStack className='items-center pt-5 space-y-1'>
+          <Text className='text-xs text-typography-400'>
+            {profile?.createdAt
+              ? `Joined ${new Date(profile.createdAt).toLocaleString('default', {
+                  month: 'short',
+                  year: 'numeric',
+                })}`
+              : 'Joined'}
+          </Text>
           <Text className='text-xs text-typography-400 text-center'>
             Version 1.0.0 - Built with Expo + NativeWind + Zustand
           </Text>

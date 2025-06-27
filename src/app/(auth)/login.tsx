@@ -19,9 +19,9 @@ import { useRouter } from 'expo-router'
 
 import { AuthTransition } from '@/components/transistions/auth-transition'
 
-import { useCredentialsLogin } from '@/hooks/useCredentialsLogin'
+import { useCredentialsLogin } from '@/hooks/auth/useCredentialsLogin'
 import { showToast } from '@/utils/showToast'
-import { useGoogleAuth } from '@/hooks/useGoogleAuth'
+import { useGoogleAuth } from '@/hooks/auth/useGoogleAuth'
 
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'

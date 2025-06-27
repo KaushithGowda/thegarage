@@ -74,6 +74,7 @@ const TabIcon = ({
 }
 
 export default function TabsLayout() {
+  const mode = usePreferenceStore((s) => s.mode)
   return (
     <Tab.Navigator
       id={undefined}
@@ -106,11 +107,12 @@ export default function TabsLayout() {
           tabBarActiveTintColor: 'text-typography-0',
           tabBarInactiveTintColor: 'text-typography-0',
           tabBarStyle: {
-            backgroundColor: 'bg-background-0',
+            backgroundColor: mode === 'dark' ? '#181719' : '#ffffff',
             position: 'absolute',
             height: 70,
             paddingTop: 15,
             paddingHorizontal: 10,
+            borderColor: mode === 'dark' ? '#181719' : '#ffffff'
           },
           animation: 'fade',
           freezeOnBlur: true,

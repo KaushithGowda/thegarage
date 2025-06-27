@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import * as SecureStore from 'expo-secure-store'
+import { setupAxiosAuthInterceptor } from '@/lib/api/axios'
 
 type AuthStore = {
   token: string | null
@@ -18,7 +19,10 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       user: null,
       hasHydrated: false,
-      setAuth: (token, user) => set({ token, user }),
+      setAuth: (token, user) => {
+        set({ token, user })
+        setupAxiosAuthInterceptor()
+      },
       logout: () => set({ token: null, user: null }),
       setHasHydrated: (value) => set({ hasHydrated: value }),
     }),
@@ -38,6 +42,11 @@ export const useAuthStore = create<AuthStore>()(
       },
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
+
+        // Setup interceptor if token exists after rehydration
+        if (state?.token) {
+          setupAxiosAuthInterceptor()
+        }
       },
     }
   )
